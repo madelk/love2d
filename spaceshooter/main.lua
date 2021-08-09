@@ -80,14 +80,21 @@ function updateStars(dt)
     end
     addStarMaybe(window.x)
 end
+-- a is the initial value, b is the destination value, t is a value between 0 and 1 indicating the progress of the "path" between a and b.
+function lerp( a, b, t )
+    return a + (b - a)*t -- for t==0 you get a, for t==1 you get b, for t==0.5 you get the middle of the two and so on...
+end
 
 function updateEmemies(dt)
     for k, v in pairs(visibleEnemies) do
-        local newx = v.startX - (gameSettings.scrollSpeed + enemiesSpeed) * dt
+        -- https://love2d.org/forums/viewtopic.php?t=79168
+        -- local newx = v.startX - (gameSettings.scrollSpeed + enemiesSpeed) * dt
         local newy = v.startY
-        local obj_vx = (v.path[1][1] - v.startX) * v.enemyType.speed
+        local newx = lerp(v.path[1][1], v.startX, -1)
+        -- score = obj_vx
+        -- local obj_vx = (v.path[1][1] - v.startX) * v.enemyType.speed
         local obj_vy = (v.path[1][2] - v.startY) * v.enemyType.speed
-        score = obj_vx
+        -- score = obj_vx
         visibleEnemies[k].startX = newx
         visibleEnemies[k].startY = newy
         if newx < 0 then
