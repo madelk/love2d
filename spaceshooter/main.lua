@@ -22,13 +22,16 @@ function love.load()
     player.bulletSpeed = 2
     player.bulletCooldown = 50
     player.bulletCooldownTimer = 0
-    ship = love.graphics.newQuad(0, 0, 16, 16, img:getDimensions())
+    player.shipsize = 16
+    player.boundary = {}
+    player.boundary.xmin = player.shipsize + 1
+    player.boundary.xmax = window.x / 3
+    player.boundary.ymin = 1
+    player.boundary.ymax = window.y - player.shipsize
+    ship = love.graphics.newQuad(0, 0, player.shipsize, player.shipsize, img:getDimensions())
     bullet = love.graphics.newQuad(16, 0, 16, 16, img:getDimensions())
     alien = love.graphics.newQuad(32, 0, 16, 16, img:getDimensions())
-    enemies = {
-        {410,20},
-        {420,200}
-    }
+    enemies = {{410, 20}, {420, 200}}
     visibleEnemies = {}
 end
 
@@ -64,16 +67,16 @@ function updatePlayerBullets()
 end
 
 function handlePlayerInput()
-    if love.keyboard.isDown("up") then
+    if love.keyboard.isDown("up") and player.y >= player.boundary.ymin then
         player.y = player.y - player.speed
     end
-    if love.keyboard.isDown("down") then
+    if love.keyboard.isDown("down") and player.y <= player.boundary.ymax then
         player.y = player.y + player.speed
     end
-    if love.keyboard.isDown("left") then
+    if love.keyboard.isDown("left") and player.x >= player.boundary.xmin then
         player.x = player.x - player.speed
     end
-    if love.keyboard.isDown("right") then
+    if love.keyboard.isDown("right") and player.x <= player.boundary.xmax then
         player.x = player.x + player.speed
     end
     if love.keyboard.isDown("space") and player.bulletCooldownTimer == 0 then
@@ -82,7 +85,7 @@ function handlePlayerInput()
     end
 end
 
-function love.update(dt)
+function updateEmenies()
     for k, v in pairs(visibleEnemies) do
         local newx = v[1] - 1
         visibleEnemies[k] = {newx, v[2]}
@@ -96,29 +99,32 @@ function love.update(dt)
             table.remove(enemies, k)
         end
     end
+end
 
+function collisionDetection()
     for bk, bv in pairs(player.bullets) do
         for ek, ev in pairs(visibleEnemies) do
             if CheckCollision(bv[1], bv[2], 16, 16, ev[1], ev[2], 16, 16) then
-                table.remove(visibleEnemies, bk)
-                table.remove(player.bullets, ek)
-                score = score+1
+                table.remove(visibleEnemies, ek)
+                table.remove(player.bullets, bk)
+                score = score + 1
             end
         end
     end
+end
 
-    screenPosition = screenPosition + gameSettings.scrollSpeed
+function love.update(dt)
+    updateEmenies()
+    collisionDetection()
     updateStars()
     updatePlayerBullets()
     handlePlayerInput()
+    screenPosition = screenPosition + gameSettings.scrollSpeed
 end
 
-function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
-    return x1 < x2+w2 and
-           x2 < x1+w1 and
-           y1 < y2+h2 and
-           y2 < y1+h1
-  end
+function CheckCollision(x1, y1, w1, h1, x2, y2, w2, h2)
+    return x1 < x2 + w2 and x2 < x1 + w1 and y1 < y2 + h2 and y2 < y1 + h1
+end
 
 function love.draw()
     love.graphics.print(score, 0, 0)
