@@ -20,7 +20,24 @@ function love.load()
     ship = love.graphics.newQuad(0, 0, player.shipsize, player.shipsize, img:getDimensions())
     bullet = love.graphics.newQuad(16, 0, 16, 16, img:getDimensions())
     alien = love.graphics.newQuad(32, 0, 16, 16, img:getDimensions())
-    enemies = {{410, 20}, {420, 200}}
+    enemyPaths = {
+        default = {{400, 20}, {5, 20}, {5, 200}, {500, 200}}
+    }
+    standardEnemy = {
+        graphics = alien,
+        speed = 100
+    }
+    enemies = {{
+        startX = 410,
+        startY = 20,
+        enemyType = standardEnemy,
+        path = enemyPaths.default
+    }, {
+        startX = 450,
+        startY = 20,
+        enemyType = standardEnemy,
+        path = enemyPaths.default
+    }}
     enemiesSpeed = 10;
     visibleEnemies = {}
     createParticle()
@@ -66,14 +83,14 @@ end
 
 function updateEmemies(dt)
     for k, v in pairs(visibleEnemies) do
-        local newx = v[1] - (gameSettings.scrollSpeed + enemiesSpeed) * dt
-        visibleEnemies[k] = {newx, v[2]}
+        local newx = v.startX - (gameSettings.scrollSpeed + enemiesSpeed) * dt
+        visibleEnemies[k].startX = newx
         if newx < 0 then
             table.remove(visibleEnemies, k)
         end
     end
     for k, v in pairs(enemies) do
-        if screenPosition > v[1] then
+        if screenPosition > v.startX then
             table.insert(visibleEnemies, v)
             table.remove(enemies, k)
         end
@@ -83,7 +100,7 @@ end
 function collisionDetection()
     for bk, bv in pairs(player.bullets) do
         for ek, ev in pairs(visibleEnemies) do
-            if CheckCollision(bv[1], bv[2], 16, 16, ev[1], ev[2], 16, 16) then
+            if CheckCollision(bv[1], bv[2], 16, 16, ev.startX, ev.startY, 16, 16) then
                 table.remove(visibleEnemies, ek)
                 table.remove(player.bullets, bk)
                 score = score + 1
@@ -111,7 +128,7 @@ function love.draw()
     love.graphics.print(score, 0, 0)
 
     for k, v in pairs(visibleEnemies) do
-        love.graphics.draw(img, alien, v[1], v[2], math.pi / 2)
+        love.graphics.draw(img, v.enemyType.graphics, v.startX, v.startY, math.pi / 2)
     end
 
     for k, v in pairs(player.bullets) do
