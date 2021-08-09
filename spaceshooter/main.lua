@@ -1,3 +1,5 @@
+require("player")
+
 function love.load()
     window = {}
     window.x = 400
@@ -14,20 +16,7 @@ function love.load()
     gameFont = love.graphics.newFont(40)
     love.graphics.setDefaultFilter("nearest", "nearest", 0)
     img = love.graphics.newImage("spritemap.png")
-    player = {}
-    player.x = window.x / 4
-    player.y = window.y / 2
-    player.speed = 60
-    player.bullets = {}
-    player.bulletSpeed = 200
-    player.bulletCooldown = 25
-    player.bulletCooldownTimer = 0
-    player.shipsize = 16
-    player.boundary = {}
-    player.boundary.xmin = player.shipsize + 1
-    player.boundary.xmax = window.x / 3
-    player.boundary.ymin = 1
-    player.boundary.ymax = window.y - player.shipsize
+    setupPlayer()
     ship = love.graphics.newQuad(0, 0, player.shipsize, player.shipsize, img:getDimensions())
     bullet = love.graphics.newQuad(16, 0, 16, 16, img:getDimensions())
     alien = love.graphics.newQuad(32, 0, 16, 16, img:getDimensions())
@@ -38,23 +27,23 @@ function love.load()
 end
 
 function createParticle()
-	-- Create a simple image with a single white pixel to use for the particles.
-	-- We could load an image from the hard drive but this is just an example.
-	local imageData = love.image.newImageData(1, 1)
-	imageData:setPixel(0,0, 1,1,1,1)
+    -- Create a simple image with a single white pixel to use for the particles.
+    -- We could load an image from the hard drive but this is just an example.
+    local imageData = love.image.newImageData(1, 1)
+    imageData:setPixel(0, 0, 1, 1, 1, 1)
 
-	local image = love.graphics.newImage(imageData)
+    local image = love.graphics.newImage(imageData)
 
-	-- Create and initialize the particle system object.
-	particleSystem = love.graphics.newParticleSystem(image, 1000)
-	particleSystem:setEmissionRate(50)
-    particleSystem:setLinearAcceleration( -500, 0, -1000, 0 )
-	particleSystem:setParticleLifetime(.2, .5)
-	particleSystem:setDirection(1*math.pi)
-	particleSystem:setSizes(1)
-	particleSystem:setSpread(.5*math.pi)
-	particleSystem:setSpeed(50, 80)
-	particleSystem:setColors(1,1,1,1)
+    -- Create and initialize the particle system object.
+    particleSystem = love.graphics.newParticleSystem(image, 1000)
+    particleSystem:setEmissionRate(50)
+    particleSystem:setLinearAcceleration(-500, 0, -1000, 0)
+    particleSystem:setParticleLifetime(.2, .5)
+    particleSystem:setDirection(1 * math.pi)
+    particleSystem:setSizes(1)
+    particleSystem:setSpread(.5 * math.pi)
+    particleSystem:setSpeed(50, 80)
+    particleSystem:setColors(1, 1, 1, 1)
 end
 
 function addStarMaybe(x)
@@ -73,38 +62,6 @@ function updateStars(dt)
         end
     end
     addStarMaybe(window.x)
-end
-
-function updatePlayerBullets(dt)
-    if player.bulletCooldownTimer > 0 then
-        player.bulletCooldownTimer = player.bulletCooldownTimer - 1
-    end
-    for k, v in pairs(player.bullets) do
-        local newx = v[1] + player.bulletSpeed * dt
-        player.bullets[k] = {newx, v[2]}
-        if newx > window.x then
-            table.remove(player.bullets, k)
-        end
-    end
-end
-
-function handlePlayerInput(dt)
-    if love.keyboard.isDown("up") and player.y >= player.boundary.ymin then
-        player.y = player.y - player.speed * dt
-    end
-    if love.keyboard.isDown("down") and player.y <= player.boundary.ymax then
-        player.y = player.y + player.speed * dt
-    end
-    if love.keyboard.isDown("left") and player.x >= player.boundary.xmin then
-        player.x = player.x - player.speed * dt
-    end
-    if love.keyboard.isDown("right") and player.x <= player.boundary.xmax then
-        player.x = player.x + player.speed * dt
-    end
-    if love.keyboard.isDown("space") and player.bulletCooldownTimer == 0 then
-        table.insert(player.bullets, {player.x, player.y})
-        player.bulletCooldownTimer = player.bulletCooldown
-    end
 end
 
 function updateEmemies(dt)
@@ -135,11 +92,6 @@ function collisionDetection()
     end
 end
 
-function updatePlayerParticle(dt)
-	particleSystem:moveTo(player.x-16, player.y+8)
-	particleSystem:update(dt) -- This performs the simulation of the particles.
-end
-
 function love.update(dt)
     updateEmemies(dt)
     collisionDetection()
@@ -155,7 +107,7 @@ end
 
 function love.draw()
     beWhite()
-	love.graphics.draw(particleSystem)
+    love.graphics.draw(particleSystem)
     love.graphics.print(score, 0, 0)
 
     for k, v in pairs(visibleEnemies) do
