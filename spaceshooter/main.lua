@@ -84,7 +84,12 @@ end
 function updateEmemies(dt)
     for k, v in pairs(visibleEnemies) do
         local newx = v.startX - (gameSettings.scrollSpeed + enemiesSpeed) * dt
+        local newy = v.startY
+        local obj_vx = (v.path[1][1] - v.startX) * v.enemyType.speed
+        local obj_vy = (v.path[1][2] - v.startY) * v.enemyType.speed
+        score = obj_vx
         visibleEnemies[k].startX = newx
+        visibleEnemies[k].startY = newy
         if newx < 0 then
             table.remove(visibleEnemies, k)
         end
