@@ -97,13 +97,32 @@ function love.update(dt)
         end
     end
 
+    for bk, bv in pairs(player.bullets) do
+        for ek, ev in pairs(visibleEnemies) do
+            if CheckCollision(bv[1], bv[2], 16, 16, ev[1], ev[2], 16, 16) then
+                table.remove(visibleEnemies, bk)
+                table.remove(player.bullets, ek)
+                score = score+1
+            end
+        end
+    end
+
     screenPosition = screenPosition + gameSettings.scrollSpeed
     updateStars()
     updatePlayerBullets()
     handlePlayerInput()
 end
 
+function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
+    return x1 < x2+w2 and
+           x2 < x1+w1 and
+           y1 < y2+h2 and
+           y2 < y1+h1
+  end
+
 function love.draw()
+    love.graphics.print(score, 0, 0)
+
     for k, v in pairs(visibleEnemies) do
         love.graphics.draw(img, alien, v[1], v[2], math.pi / 2)
     end
