@@ -8,9 +8,7 @@ function love.load()
     for i = 1, window.x do
         addStarMaybe(i)
     end
-    number = 0
     score = 0
-    timer = 60
     gameFont = love.graphics.newFont(40)
     love.graphics.setDefaultFilter("nearest", "nearest", 0)
     img = love.graphics.newImage("spritemap.png")
@@ -31,7 +29,7 @@ function addStarMaybe(x)
     end
 end
 
-function love.update(dt)
+function updateStars()
     for k, v in pairs(stars) do
         local newx = v[1] - player.speed
         stars[k] = {newx, v[2]}
@@ -40,7 +38,9 @@ function love.update(dt)
         end
     end
     addStarMaybe(window.x)
+end
 
+function updatePlayerBullets()
     for k, v in pairs(player.bullets) do
         local newx = v[1] + player.bulletSpeed
         player.bullets[k] = {newx, v[2]}
@@ -48,7 +48,9 @@ function love.update(dt)
             table.remove(player.bullets, k)
         end
     end
+end
 
+function handlePlayerInput()
     if love.keyboard.isDown("up") then
         player.y = player.y - player.speed
     end
@@ -64,6 +66,13 @@ function love.update(dt)
     if love.keyboard.isDown("space") then
         table.insert(player.bullets, {player.x, player.y})
     end
+end
+
+function love.update(dt)
+    updateStars()
+    updatePlayerBullets()
+    handlePlayerInput()
+
 end
 
 function love.draw()
