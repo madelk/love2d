@@ -26,6 +26,7 @@ function love.load()
     setupEnemies()
     createParticle()
     onScreenPowerups = {}
+    onScreenPowerupRotationSpeed = 0.1
 end
 
 function love.update(dt)
@@ -47,7 +48,7 @@ function love.draw()
         love.graphics.draw(img, v.enemyType.graphics, v.x, v.y, math.pi / 2)
     end
     for k, v in pairs(onScreenPowerups) do
-        love.graphics.draw(img, powerup, v[1], v[2], math.pi / 2)
+        love.graphics.draw(img, powerup, v.x, v.y, v.rotation, 1, 1, 8, 8)
     end
 
     for k, v in pairs(player.bullets) do

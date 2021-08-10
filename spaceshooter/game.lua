@@ -1,4 +1,3 @@
-
 function createParticle()
     -- Create a simple image with a single white pixel to use for the particles.
     -- We could load an image from the hard drive but this is just an example.
@@ -28,8 +27,10 @@ end
 
 function updatePowerups(dt)
     for k, v in pairs(onScreenPowerups) do
-        local newx = v[1] - gameSettings.scrollSpeed * dt
-        onScreenPowerups[k] = {newx, v[2]}
+        if not v.rotation then v.rotation = 0 end
+        v.rotation = v.rotation + onScreenPowerupRotationSpeed
+        local newx = v.x - gameSettings.scrollSpeed * dt
+        v.x = newx
         if newx < 0 then
             table.remove(onScreenPowerups, k)
         end
@@ -52,7 +53,11 @@ function collisionDetection()
         for ek, ev in pairs(visibleEnemies) do
             if CheckCollision(bv[1], bv[2], 16, 16, ev.x, ev.y, 16, 16) then
                 if ev.powerup then
-                    table.insert(onScreenPowerups, {ev.x, ev.y})
+                    table.insert(onScreenPowerups, {
+                        x = ev.x+8,
+                        y = ev.y+8,
+                        rotation = 0
+                    })
                 end
                 table.remove(visibleEnemies, ek)
                 table.remove(player.bullets, bk)
