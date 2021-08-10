@@ -20,27 +20,50 @@ function love.load()
     ship = love.graphics.newQuad(0, 0, player.shipsize, player.shipsize, img:getDimensions())
     bullet = love.graphics.newQuad(16, 0, 16, 16, img:getDimensions())
     alien = love.graphics.newQuad(32, 0, 16, 16, img:getDimensions())
+    powerup = love.graphics.newQuad(48, 0, 16, 16, img:getDimensions())
     enemyPaths = {
-        default = {{400, 20}, {5, 20}, {5, 200}, {500, 200}}
+        default = {{400, 20}, {20, 20}, {20, 200}, {500, 200}}
     }
     standardEnemy = {
         graphics = alien,
         speed = 100
     }
     enemies = {{
-        startX = 410,
-        startY = 20,
+        x = 400,
+        y = 20,
         enemyType = standardEnemy,
         path = enemyPaths.default
     }, {
-        startX = 450,
-        startY = 20,
+        x = 430,
+        y = 20,
+        enemyType = standardEnemy,
+        path = enemyPaths.default
+    }, {
+        x = 460,
+        y = 20,
+        enemyType = standardEnemy,
+        path = enemyPaths.default,
+        powerup = true
+    }, {
+        x = 490,
+        y = 20,
+        enemyType = standardEnemy,
+        path = enemyPaths.default
+    }, {
+        x = 520,
+        y = 20,
+        enemyType = standardEnemy,
+        path = enemyPaths.default
+    }, {
+        x = 550,
+        y = 20,
         enemyType = standardEnemy,
         path = enemyPaths.default
     }}
     enemiesSpeed = 10;
     visibleEnemies = {}
     createParticle()
+    onScreenPowerups = {}
 end
 
 function createParticle()
@@ -70,6 +93,16 @@ function addStarMaybe(x)
     end
 end
 
+function updatePowerups(dt)
+    for k, v in pairs(onScreenPowerups) do
+        local newx = v[1] - gameSettings.scrollSpeed * dt
+        onScreenPowerups[k] = {newx, v[2]}
+        if newx < 0 then
+            table.remove(onScreenPowerups, k)
+        end
+    end
+    addStarMaybe(window.x)
+end
 function updateStars(dt)
     for k, v in pairs(stars) do
         local newx = v[1] - gameSettings.scrollSpeed * dt
@@ -81,28 +114,66 @@ function updateStars(dt)
     addStarMaybe(window.x)
 end
 -- a is the initial value, b is the destination value, t is a value between 0 and 1 indicating the progress of the "path" between a and b.
-function lerp( a, b, t )
-    return a + (b - a)*t -- for t==0 you get a, for t==1 you get b, for t==0.5 you get the middle of the two and so on...
+function lerp(a, b, t)
+    return a + (b - a) * t -- for t==0 you get a, for t==1 you get b, for t==0.5 you get the middle of the two and so on...
+end
+
+function moveto(agent, target, dt)
+    -- find the agent's "step" distance for this frame
+    local step = agent.enemyType.speed * dt
+
+    -- find the distance to target
+    local distx, disty = target.x - agent.x, target.y - agent.y
+    local dist = math.sqrt(distx * distx + disty * disty)
+
+    if dist <= step then
+        -- we have arrived
+        agent.x = target.x
+        agent.y = target.y
+        return true
+    end
+
+    -- get the normalized vector between the target and agent
+    local nx, ny = distx / dist, disty / dist
+
+    -- find the movement vector for this frame
+    local dx, dy = nx * step, ny * step
+
+    -- keep moving
+    agent.x = agent.x + dx
+    agent.y = agent.y + dy
+    return false
 end
 
 function updateEmemies(dt)
     for k, v in pairs(visibleEnemies) do
+        if not v.pathSegmentNumber then v.pathSegmentNumber = 1 end
+        if v.path[v.pathSegmentNumber] then
+            local arrived = moveto(v, {
+                x = v.path[v.pathSegmentNumber][1],
+                y = v.path[v.pathSegmentNumber][2]
+            }, dt)
+            print(arrived)
+            if arrived then
+                v.pathSegmentNumber = v.pathSegmentNumber + 1
+            end
+        end
         -- https://love2d.org/forums/viewtopic.php?t=79168
         -- local newx = v.startX - (gameSettings.scrollSpeed + enemiesSpeed) * dt
-        local newy = v.startY
-        local newx = lerp(v.path[1][1], v.startX, -1)
-        -- score = obj_vx
-        -- local obj_vx = (v.path[1][1] - v.startX) * v.enemyType.speed
-        local obj_vy = (v.path[1][2] - v.startY) * v.enemyType.speed
-        -- score = obj_vx
-        visibleEnemies[k].startX = newx
-        visibleEnemies[k].startY = newy
-        if newx < 0 then
-            table.remove(visibleEnemies, k)
-        end
+        -- local newy = v.startY
+        -- local newx = lerp(v.path[1][1], v.startX, -1)
+        -- -- score = obj_vx
+        -- -- local obj_vx = (v.path[1][1] - v.startX) * v.enemyType.speed
+        -- local obj_vy = (v.path[1][2] - v.startY) * v.enemyType.speed
+        -- -- score = obj_vx
+        -- visibleEnemies[k].startX = newx
+        -- visibleEnemies[k].startY = newy
+        -- if newx < 0 then
+        --     table.remove(visibleEnemies, k)
+        -- end
     end
     for k, v in pairs(enemies) do
-        if screenPosition > v.startX then
+        if screenPosition > v.x then
             table.insert(visibleEnemies, v)
             table.remove(enemies, k)
         end
@@ -112,7 +183,8 @@ end
 function collisionDetection()
     for bk, bv in pairs(player.bullets) do
         for ek, ev in pairs(visibleEnemies) do
-            if CheckCollision(bv[1], bv[2], 16, 16, ev.startX, ev.startY, 16, 16) then
+            if CheckCollision(bv[1], bv[2], 16, 16, ev.x, ev.y, 16, 16) then
+                if ev.powerup then table.insert(onScreenPowerups, {ev.x, ev.y}) end
                 table.remove(visibleEnemies, ek)
                 table.remove(player.bullets, bk)
                 score = score + 1
@@ -125,6 +197,7 @@ function love.update(dt)
     updateEmemies(dt)
     collisionDetection()
     updateStars(dt)
+    updatePowerups(dt)
     updatePlayerBullets(dt)
     handlePlayerInput(dt)
     screenPosition = screenPosition + gameSettings.scrollSpeed
@@ -140,7 +213,10 @@ function love.draw()
     love.graphics.print(score, 0, 0)
 
     for k, v in pairs(visibleEnemies) do
-        love.graphics.draw(img, v.enemyType.graphics, v.startX, v.startY, math.pi / 2)
+        love.graphics.draw(img, v.enemyType.graphics, v.x, v.y, math.pi / 2)
+    end
+    for k, v in pairs(onScreenPowerups) do
+        love.graphics.draw(img, powerup, v[1], v[2], math.pi / 2)
     end
 
     for k, v in pairs(player.bullets) do
