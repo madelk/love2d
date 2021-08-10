@@ -13,7 +13,6 @@ function setupPlayer()
     player.boundary.xmax = window.x / 3
     player.boundary.ymin = 1
     player.boundary.ymax = window.y - player.shipsize
-
 end
 
 function updatePlayerBullets(dt)
