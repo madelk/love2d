@@ -34,6 +34,17 @@ jobs:
       - name: build
         run: npm run build
 
+
+      - name: Remove gh-pages
+        uses: dawidd6/action-delete-branch@v3.1.0
+        with:
+          branches: gh-pages
+          
+      - name: Create gh-pages
+        uses: peterjgrainger/action-create-branch@v2.0.1
+        with:
+          branch: gh-pages
+    
       - name: Git Auto Commit
         uses: stefanzweifel/git-auto-commit-action@v4.11.0
         with:
