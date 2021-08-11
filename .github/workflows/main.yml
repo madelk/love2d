@@ -39,6 +39,7 @@ jobs:
         with:
           commit_message: Git Auto Comit
           commit_options: '--no-verify --signoff'
+          skip_dirty_check: true
           file_pattern: docs/**
           push_options: '--force'
           branch: gh-pages
