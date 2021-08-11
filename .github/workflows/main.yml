@@ -37,10 +37,12 @@ jobs:
 
       - name: Remove gh-pages
         uses: dawidd6/action-delete-branch@v3.1.0
+        continue-on-error: true
         with:
           branches: gh-pages
           
       - name: Create gh-pages
+        continue-on-error: true
         uses: peterjgrainger/action-create-branch@v2.0.1
         with:
           branch: gh-pages
