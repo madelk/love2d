@@ -15,7 +15,11 @@ function love.load()
     end
     screenPosition = window.x
     score = 0
-    gameFont = love.graphics.newFont(40)
+    fonts = {
+        gameFont = love.graphics.newFont(20),
+        titleFont = love.graphics.newFont(50),
+        subTitleFont = love.graphics.newFont(20),
+    }
     love.graphics.setDefaultFilter("nearest", "nearest", 0)
     img = love.graphics.newImage("spritemap.png")
     setupPlayer()
@@ -79,12 +83,19 @@ function love.draw()
 end
 
 function drawTitle()
+    beWhite()
+    love.graphics.setFont(fonts.titleFont)
     love.graphics.print("Space Shooter", 0, 0)
+    love.graphics.setFont(fonts.subTitleFont)
+    love.graphics.print("(press space)", 200, 200)
 end
 function drawGameOver()
+    beWhite()
+    love.graphics.setFont(fonts.titleFont)
     love.graphics.print("u ded", 0, 0)
 end
 function drawMainGame()
+    love.graphics.setFont(fonts.gameFont)
     beWhite()
     love.graphics.draw(particleSystem)
     love.graphics.print(score .. " | " .. player.lives, 0, 0)
@@ -101,5 +112,4 @@ function drawMainGame()
     end
     love.graphics.points(stars)
     love.graphics.draw(img, ship, player.x, player.y, math.pi / 2)
-    love.graphics.setFont(gameFont)
 end
