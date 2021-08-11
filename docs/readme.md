@@ -1,3 +1,3 @@
 # "games"
-* [Circleclick](/circleclick)
-* [SpaceShooter](/spaceshooter)
+* [Circleclick](circleclick)
+* [SpaceShooter](spaceshooter)
