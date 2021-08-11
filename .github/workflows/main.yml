@@ -33,28 +33,10 @@ jobs:
       # Runs a single command using the runners shell
       - name: build
         run: npm run build
-
-
-      - name: Remove gh-pages
-        uses: dawidd6/action-delete-branch@v3.1.0
-        continue-on-error: true
+        
+      - name: GH Pages deploy
+        uses: Cecilapp/GitHub-Pages-deploy@3.2.0
         with:
-          branches: gh-pages
-          
-      - name: Create gh-pages
-        continue-on-error: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: peterjgrainger/action-create-branch@v2.0.1
-        with:
-          branch: gh-pages
-    
-      - name: Git Auto Commit
-        uses: stefanzweifel/git-auto-commit-action@v4.11.0
-        with:
-          commit_message: Git Auto Comit
-          commit_options: '--no-verify --signoff'
-          skip_dirty_check: true
-          file_pattern: docs/**
-          push_options: '--force'
+          email: madelk@gmail.com
+          build_dir: docs
           branch: gh-pages
