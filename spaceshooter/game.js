@@ -284,6 +284,6 @@ Module.expectedDataFileDownloads++;
     }
 
   }
-  loadPackage({"package_uuid":"d5a9c309-4baa-40f1-8b23-8d7e6ffdeb02","remote_package_size":18334,"files":[{"filename":"/conf.lua","crunched":0,"start":0,"end":4271,"audio":false},{"filename":"/enemies.lua","crunched":0,"start":4271,"end":6624,"audio":false},{"filename":"/game.lua","crunched":0,"start":6624,"end":9715,"audio":false},{"filename":"/main.lua","crunched":0,"start":9715,"end":12871,"audio":false},{"filename":"/player.lua","crunched":0,"start":12871,"end":15000,"audio":false},{"filename":"/spritemap.png","crunched":0,"start":15000,"end":15825,"audio":false},{"filename":"/spritemap.xcf","crunched":0,"start":15825,"end":18334,"audio":false}]});
+  loadPackage({"package_uuid":"2c4a284b-1403-465f-b0cd-69b86d4f4021","remote_package_size":18334,"files":[{"filename":"/conf.lua","crunched":0,"start":0,"end":4271,"audio":false},{"filename":"/enemies.lua","crunched":0,"start":4271,"end":6624,"audio":false},{"filename":"/game.lua","crunched":0,"start":6624,"end":9715,"audio":false},{"filename":"/main.lua","crunched":0,"start":9715,"end":12871,"audio":false},{"filename":"/player.lua","crunched":0,"start":12871,"end":15000,"audio":false},{"filename":"/spritemap.png","crunched":0,"start":15000,"end":15825,"audio":false},{"filename":"/spritemap.xcf","crunched":0,"start":15825,"end":18334,"audio":false}]});
 
 })();
