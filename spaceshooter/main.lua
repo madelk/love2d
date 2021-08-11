@@ -93,6 +93,8 @@ function drawGameOver()
     beWhite()
     love.graphics.setFont(fonts.titleFont)
     love.graphics.print("u ded", 0, 0)
+    love.graphics.setFont(fonts.subTitleFont)
+    love.graphics.print("(do better)", 200, 200)
 end
 function drawMainGame()
     love.graphics.setFont(fonts.gameFont)
