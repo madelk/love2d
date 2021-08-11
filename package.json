@@ -1,0 +1,23 @@
+{
+  "name": "love2d",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:spaceshooter": "love.js --title 'space shooter' spaceshooter docs/spaceshooter",
+    "build:circleclick": "love.js --title 'circleclick' circleclick docs/circleclick"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/madelk/love2d.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/madelk/love2d/issues"
+  },
+  "homepage": "https://github.com/madelk/love2d#readme",
+  "dependencies": {
+    "love.js": "^11.3.1"
+  }
+}
