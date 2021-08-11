@@ -31,11 +31,13 @@ function love.load()
 end
 
 function love.update(dt)
-    updateMainGame(dt)
+    if Scene == "game" then
+        updateMainGame(dt)
+    end
 end
 
 function love.keyreleased(key)
-    if key =="space" then
+    if key == "space" then
         if Scene == "title" then
             Scene = "game"
         elseif Scene == "gameover" then
@@ -44,7 +46,7 @@ function love.keyreleased(key)
             playerFirePressed()
         end
     end
- end
+end
 
 -- function pressAKey()
 --     if love.keyreleased("space") then
