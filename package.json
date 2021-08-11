@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:spaceshooter": "love.js --title 'space shooter' spaceshooter docs/spaceshooter",
-    "build:circleclick": "love.js --title 'circleclick' circleclick docs/circleclick"
+    "build:spaceshooter": "love.js --compatibility --title 'space shooter' spaceshooter docs/spaceshooter",
+    "build:circleclick": "love.js --compatibility --title 'circleclick' circleclick docs/circleclick",
+    "build":"npm run build:spaceshooter && npm run build:circleclick"
   },
   "repository": {
     "type": "git",
