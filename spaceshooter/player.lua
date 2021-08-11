@@ -9,12 +9,26 @@ function setupPlayer()
     player.bulletCooldownTimer = 0
     player.shipsize = 16
     player.boundary = {}
+    player.lives = 3
     player.boundary.xmin = player.shipsize + 1
     player.boundary.xmax = window.x / 3
     player.boundary.ymin = 1
     player.boundary.ymax = window.y - player.shipsize
 end
 
+function playerLoseLife()
+    if player.lives == 0 then
+        Scene = "gameover"
+    else
+        player.lives = player.lives - 1
+        player.x = window.x / 4
+        player.y = window.y / 2
+    end
+end
+
+function gameOver()
+
+end
 function updatePlayerBullets(dt)
     if player.bulletCooldownTimer > 0 then
         player.bulletCooldownTimer = player.bulletCooldownTimer - 1
@@ -41,7 +55,13 @@ function handlePlayerInput(dt)
     if love.keyboard.isDown("right") and player.x <= player.boundary.xmax then
         player.x = player.x + player.speed * dt
     end
-    if love.keyboard.isDown("space") and player.bulletCooldownTimer == 0 then
+    if love.keyboard.isDown("space") then
+        playerFirePressed()
+    end
+end
+
+function playerFirePressed()
+    if player.bulletCooldownTimer == 0 then
         table.insert(player.bullets, {player.x, player.y})
         player.bulletCooldownTimer = player.bulletCooldown
     end

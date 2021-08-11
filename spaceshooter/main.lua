@@ -27,9 +27,36 @@ function love.load()
     createParticle()
     onScreenPowerups = {}
     onScreenPowerupRotationSpeed = 0.1
+    Scene = "title"
 end
 
 function love.update(dt)
+    updateMainGame(dt)
+end
+
+function love.keyreleased(key)
+    if key =="space" then
+        if Scene == "title" then
+            Scene = "game"
+        elseif Scene == "gameover" then
+            love.load()
+        else
+            playerFirePressed()
+        end
+    end
+ end
+
+-- function pressAKey()
+--     if love.keyreleased("space") then
+--         if Scene == "title" then
+--             Scene = "game"
+--         elseif Scene == "gameover" then
+--             love.load()
+--         end
+--     end
+-- end
+
+function updateMainGame(dt)
     updateEmemies(dt)
     collisionDetection()
     updateStars(dt)
@@ -40,9 +67,25 @@ function love.update(dt)
 end
 
 function love.draw()
+    if Scene == "title" then
+        drawTitle()
+    elseif Scene == "gameover" then
+        drawGameOver()
+    else
+        drawMainGame()
+    end
+end
+
+function drawTitle()
+    love.graphics.print("Space Shooter", 0, 0)
+end
+function drawGameOver()
+    love.graphics.print("u ded", 0, 0)
+end
+function drawMainGame()
     beWhite()
     love.graphics.draw(particleSystem)
-    love.graphics.print(score, 0, 0)
+    love.graphics.print(score .. " | " .. player.lives, 0, 0)
 
     for k, v in pairs(visibleEnemies) do
         love.graphics.draw(img, v.enemyType.graphics, v.x, v.y, math.pi / 2)

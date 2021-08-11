@@ -49,8 +49,13 @@ function updateStars(dt)
 end
 
 function collisionDetection()
-    for bk, bv in pairs(player.bullets) do
-        for ek, ev in pairs(visibleEnemies) do
+    collisionDetectionEnemies()
+    collisionDetectionPowerUp()
+end
+
+function collisionDetectionEnemies()
+    for ek, ev in pairs(visibleEnemies) do
+        for bk, bv in pairs(player.bullets) do
             if CheckCollision(bv[1], bv[2], 16, 16, ev.x, ev.y, 16, 16) then
                 if ev.powerup then
                     table.insert(onScreenPowerups, {
@@ -63,6 +68,17 @@ function collisionDetection()
                 table.remove(player.bullets, bk)
                 score = score + 1
             end
+        end
+        if CheckCollision(ev.x, ev.y, 16, 16, player.x, player.y, 16,16) then
+            playerLoseLife()
+        end
+    end
+end
+function collisionDetectionPowerUp()
+    for k, v in pairs(onScreenPowerups) do
+        if CheckCollision(v.x, v.y, 16, 16, player.x, player.y, 16, 16) then
+            table.remove(onScreenPowerups, k)
+            player.speed = player.speed + 30
         end
     end
 end
